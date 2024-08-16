@@ -1,8 +1,6 @@
-import datetime as dt
-
 import functions_framework
 
-from slack_event_api_handler import SlackEventApiHandler
+from slack_event_handler import slack_event_callback
 
 
 @functions_framework.http
@@ -20,34 +18,6 @@ def slack_events_url_endpoint(request):
 
 
 def slack_events_receive_callback(request) -> dict:
-    headers = dict(request.headers)
-    data = {}
+    response = slack_event_callback(request)
 
-    if not is_request_timestamp_valid(headers["X-Slack-Request-Timestamp"]):
-        data["status"] = "failed"
-        data["message"] = "The request timestamp has expired."
-
-    request_data = request.get_json(force=True)
-
-    request_type = request_data.get("type")
-
-    event_handler = SlackEventApiHandler()
-
-    if request_type == "url_verification":
-        data = event_handler.respond_to_url_verification(request_data)
-    elif request_type == "event_callback":
-        data = {"response": "received"}
-        try:
-            event_handler.handle_slack_event(request_data)
-        except Exception as err:
-            print(err)
-    else:
-        data = {"message": "Received no event type."}
-
-    print(data)
-
-    return data
-
-
-def is_request_timestamp_valid(timestamp):
-    return (int(timestamp) - int(dt.datetime.now().timestamp())) < 60 * 5
+    return response
