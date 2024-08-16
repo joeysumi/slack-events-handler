@@ -4,8 +4,6 @@ import functions_framework
 
 from slack_event_api_handler import SlackEventApiHandler
 
-application_password = "BV3y bH2S 2Vmh 79bZ M10y mRlx"
-
 
 @functions_framework.http
 def slack_events_url_endpoint(request):
