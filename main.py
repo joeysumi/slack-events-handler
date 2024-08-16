@@ -33,12 +33,16 @@ def slack_events_receive_callback(request) -> dict:
 
     request_type = request_data.get("type")
 
-    event_handler = SlackEventApiHandler(request_data)
+    event_handler = SlackEventApiHandler()
 
     if request_type == "url_verification":
-        data = event_handler.respond_to_url_verification()
+        data = event_handler.respond_to_url_verification(request_data)
     elif request_type == "event_callback":
-        data = event_handler.handle_slack_event()
+        data = {"response": "received"}
+        try:
+            event_handler.handle_slack_event(request_data)
+        except Exception as err:
+            print(err)
     else:
         data = {"message": "Received no event type."}
 
