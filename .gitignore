@@ -3,3 +3,5 @@ testing_setup.py
 venv/
 .idea/
 __pycache__/
+*.pyc
+function-source*
