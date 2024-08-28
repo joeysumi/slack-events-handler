@@ -11,7 +11,7 @@ def log(text):
 class SFTPNavigator:
 
     GALLERY_PATH = "./public_html/wp-content/gallery"
-    DEFAULT_CUTOFF_TIME_IN_SECONDS = 60 * 60 * 24 * 365
+    DEFAULT_CUTOFF_TIME_IN_SECONDS = 60 * 60 * 24 * 365  # about a year
 
     def __init__(self, host=None, username=None, password=None, port=None, sftp_connector=SFTPConnector()):
         self._host = host
