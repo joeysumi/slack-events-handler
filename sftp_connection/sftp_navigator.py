@@ -47,7 +47,7 @@ class SFTPNavigator:
         try:
             directory_contents = self.sftp_session.listdir(directory_path)
             return file_name in directory_contents
-        except FileNotFoundError:  # no file/directory found
+        except FileNotFoundError:  # no directory found
             self._create_file(directory_path)
             return False
 
