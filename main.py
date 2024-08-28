@@ -41,7 +41,7 @@ def slack_events_receive_callback(request) -> dict:
 
     elif request_type == "event_callback":
         response = {"response": "received"}
-        slack_app_id = request_data["slack_app_id"]
+        slack_app_id = request_data["api_app_id"]
         app_credentials = get_app_credentials(slack_app_id, credentials_path)
         if app_credentials is None:  # no credentials match app_id
             response["status"] = "failed"
