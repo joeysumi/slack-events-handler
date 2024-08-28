@@ -54,3 +54,17 @@ class SFTPNavigator:
     def save_file_to_directory(self, file_data: bytes, file_path: str):
         with self.sftp_session.open(file_path, "wb+") as file:
             file.write(file_data)
+
+    def cleanup_directory_files(self, directory_path, cutoff_time_in_seconds=None):
+        """ Removes files in a directory if the file's modified date is earlier than the specified cutoff time
+            Defaults to a year
+        """
+        cutoff_time = cutoff_time_in_seconds or self.DEFAULT_CUTOFF_TIME_IN_SECONDS
+
+        directory_contents = self.sftp_session.listdir_attr(directory_path)
+        current_timestamp = dt.now().timestamp()
+
+        oldest_time_possible = current_timestamp - cutoff_time
+        expired_files = [file.filename for file in directory_contents if oldest_time_possible > file.st_mtime]
+        for filename in expired_files:
+            self.sftp_session.remove(f"{directory_path}/{filename}")
