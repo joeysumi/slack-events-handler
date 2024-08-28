@@ -21,7 +21,7 @@ def slack_events_url_endpoint(request):
     return slack_events_receive_callback(request)
 
 
-credentials_path = f"{os.path.abspath('__file__')}/app-credentials.json"
+credentials_path = "./app-credentials.json"
 
 
 def slack_events_receive_callback(request) -> dict:
