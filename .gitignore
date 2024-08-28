@@ -1,5 +1,6 @@
 test.png
 testing_setup.py
+app-credentials.json
 venv/
 .idea/
 __pycache__/
