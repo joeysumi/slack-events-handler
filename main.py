@@ -21,6 +21,9 @@ def slack_events_url_endpoint(request):
     return slack_events_receive_callback(request)
 
 
+credentials_path = f"{os.path.abspath('__file__')}/app-credentials.json"
+
+
 def slack_events_receive_callback(request) -> dict:
     headers = dict(request.headers)
     response = {}
@@ -31,27 +34,28 @@ def slack_events_receive_callback(request) -> dict:
 
     request_data = request.get_json(force=True)
 
-    slack_app_id = request_data["slack_app_id"]
-    credentials_path = f"{os.path.abspath('__file__')}/app-credentials.json"
-    app_credentials = get_app_credentials(slack_app_id, credentials_path)
+    request_type = request_data.get("type")
 
-    if app_credentials is None:
-        response["status"] = "failed"
-        response["message"] = "Slack app not registered in credentials."
-    else:  # credentials found
-        request_type = request_data.get("type")
+    if request_type == "url_verification":
+        response = SlackEventApiHandler.respond_to_url_verification(request_data)
 
-        if request_type == "url_verification":
-            response = SlackEventApiHandler.respond_to_url_verification(request_data)
-        elif request_type == "event_callback":
-            response = {"response": "received"}
+    elif request_type == "event_callback":
+        response = {"response": "received"}
+        slack_app_id = request_data["slack_app_id"]
+        app_credentials = get_app_credentials(slack_app_id, credentials_path)
+        if app_credentials is None:  # no credentials match app_id
+            response["status"] = "failed"
+            response["message"] = "Slack app not registered in credentials."
+
+        else:
             try:
                 event_handler = SlackEventApiHandler(**app_credentials)
                 event_handler.handle_slack_event(request_data)
             except Exception as err:
                 print(err)
-        else:
-            response = {"message": "Received no event type."}
+
+    else:
+        response = {"message": "Received no event type."}
 
     print(response)
 
