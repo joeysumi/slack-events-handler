@@ -62,7 +62,7 @@ class SFTPNavigator:
         cutoff_time = cutoff_time_in_seconds or self.DEFAULT_CUTOFF_TIME_IN_SECONDS
 
         directory_contents = self.sftp_session.listdir_attr(directory_path)
-        current_timestamp = dt.now().timestamp()
+        current_timestamp = int(dt.now().timestamp())
 
         oldest_time_possible = current_timestamp - cutoff_time
         expired_files = [file.filename for file in directory_contents if oldest_time_possible > file.st_mtime]
