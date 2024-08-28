@@ -1,4 +1,4 @@
-from sftp_connector import SFTPConnector
+from sftp_connection import SFTPConnector
 
 
 def log(text):

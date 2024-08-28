@@ -33,19 +33,39 @@ class SlackEventApiHandler:
 
     def __init__(
             self,
+            slack_app_id,
+            slack_bot_token,
+            sftp_host,
+            sftp_username,
+            sftp_password,
+            sftp_port,
             api_requester=SlackApiRequester,
             sftp_navigator=SFTPNavigator,
     ) -> None:
-        self._host = os.environ.get("SFTP_HOST")
-        self._username = os.environ.get("SFTP_USERNAME")
-        self._password = os.environ.get("SFTP_PASSWORD")
-        self._port = os.environ.get("SFTP_PORT", 22)
-        self._sftp_navigator = sftp_navigator
+        self._slack_app_id = slack_app_id
+        self._slack_bot_token = slack_bot_token
+        self._sftp_host = sftp_host
+        self._sftp_username = sftp_username
+        self._sftp_password = sftp_password
+        self._sftp_port = sftp_port
+        self._sftp_navigator = sftp_navigator  # lazy loads
+        self._sftp = None
 
         self.api_requester = api_requester()
-        self.wp_url = os.environ.get("WP_WEBHOOK_URL", "")
 
-    def respond_to_url_verification(self, response: dict) -> dict:
+    @property
+    def sftp(self):
+        if self._sftp is None:
+            self._sftp = self._sftp_navigator(
+                self._sftp_host,
+                self._sftp_username,
+                self._sftp_password,
+                self._sftp_port
+            )
+        return self._sftp
+
+    @classmethod
+    def respond_to_url_verification(cls, response: dict) -> dict:
         """ Response to Slack Events API url verification. """
         token = response.get("token")
         challenge = response.get("challenge")
@@ -54,10 +74,10 @@ class SlackEventApiHandler:
         if token and challenge:
             data["status"] = "success"
             data["challenge"] = challenge
-            data["message"] = self.SUCCESSFUL_CHALLENGE_MESSAGE
+            data["message"] = cls.SUCCESSFUL_CHALLENGE_MESSAGE
         else:
             data["status"] = "failed"
-            data["message"] = self.FAILED_CHALLENGE_MESSAGE
+            data["message"] = cls.FAILED_CHALLENGE_MESSAGE
 
         return data
 
@@ -112,13 +132,12 @@ class SlackEventApiHandler:
 
     def _save_image_to_sftp_file(self, image_data, image_name, channel_name):
         try:
-            sftp = self._sftp_navigator(self._host, self._username, self._password, self._port)
             # directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}"
             directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/test_folder"
-            if sftp.is_file_in_directory(directory_path, image_name):
+            if self.sftp.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 
-            sftp.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
+            self.sftp.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
 
         except Exception as err:
             print(f"An SFTP Error occurred: {err}")

@@ -1,8 +1,10 @@
 import datetime as dt
+import os.path
 
 import functions_framework
 
 from slack_event_api_handler import SlackEventApiHandler
+from utils.unpack_credentials import get_app_credentials
 
 
 @functions_framework.http
@@ -21,32 +23,39 @@ def slack_events_url_endpoint(request):
 
 def slack_events_receive_callback(request) -> dict:
     headers = dict(request.headers)
-    data = {}
+    response = {}
 
     if not is_request_timestamp_valid(headers["X-Slack-Request-Timestamp"]):
-        data["status"] = "failed"
-        data["message"] = "The request timestamp has expired."
+        response["status"] = "failed"
+        response["message"] = "The request timestamp has expired."
 
     request_data = request.get_json(force=True)
 
-    request_type = request_data.get("type")
+    slack_app_id = request_data["slack_app_id"]
+    credentials_path = f"{os.path.abspath('__file__')}/app-credentials.json"
+    app_credentials = get_app_credentials(slack_app_id, credentials_path)
 
-    event_handler = SlackEventApiHandler()
+    if app_credentials is None:
+        response["status"] = "failed"
+        response["message"] = "Slack app not registered in credentials."
+    else:  # credentials found
+        request_type = request_data.get("type")
 
-    if request_type == "url_verification":
-        data = event_handler.respond_to_url_verification(request_data)
-    elif request_type == "event_callback":
-        data = {"response": "received"}
-        try:
-            event_handler.handle_slack_event(request_data)
-        except Exception as err:
-            print(err)
-    else:
-        data = {"message": "Received no event type."}
+        if request_type == "url_verification":
+            response = SlackEventApiHandler.respond_to_url_verification(request_data)
+        elif request_type == "event_callback":
+            response = {"response": "received"}
+            try:
+                event_handler = SlackEventApiHandler(**app_credentials)
+                event_handler.handle_slack_event(request_data)
+            except Exception as err:
+                print(err)
+        else:
+            response = {"message": "Received no event type."}
 
-    print(data)
+    print(response)
 
-    return data
+    return response
 
 
 def is_request_timestamp_valid(timestamp):

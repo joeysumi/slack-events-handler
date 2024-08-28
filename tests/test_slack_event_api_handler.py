@@ -47,6 +47,14 @@ def create_fake_challenge_response(token=None, challenge=None) -> dict:
 class TestSlackEventApiHandler(TestCase):
 
     def setUp(self) -> None:
+        self.fake_credentials = {
+            "slack_app_id": "some_app_id",
+            "slack_bot_token": "secret_token",
+            "sftp_host": "host",
+            "sftp_username": "username",
+            "sftp_password": "password",
+            "sftp_port": 1,
+        }
         self._fake_file_data = None  # will be lazy loaded for exception tests
         self.mock_requester = Mock(**{
             "return_value.get_image_data.return_value": image_data
@@ -55,6 +63,7 @@ class TestSlackEventApiHandler(TestCase):
             "return_value.is_file_in_directory.return_value": False
         })
         self.api_handler = SlackEventApiHandler(
+            **self.fake_credentials,
             api_requester=self.mock_requester,
             sftp_navigator=self.mock_navigator,
         )
