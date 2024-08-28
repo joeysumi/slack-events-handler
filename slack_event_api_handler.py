@@ -1,5 +1,3 @@
-import os
-
 from sftp_connection import SFTPNavigator
 from slack_api_requester import SlackApiRequester
 from utils.specified_exceptions import (
@@ -33,17 +31,14 @@ class SlackEventApiHandler:
 
     def __init__(
             self,
-            slack_app_id,
-            slack_bot_token,
             sftp_host,
             sftp_username,
             sftp_password,
             sftp_port,
             api_requester=SlackApiRequester,
             sftp_navigator=SFTPNavigator,
+            **kwargs
     ) -> None:
-        self._slack_app_id = slack_app_id
-        self._slack_bot_token = slack_bot_token
         self._sftp_host = sftp_host
         self._sftp_username = sftp_username
         self._sftp_password = sftp_password
