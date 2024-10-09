@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from slack_api_requester import SlackApiRequester
+from slack_api.slack_api_requester import SlackApiRequester
 
 channel = "my-channel"
 fake_file_info = {

@@ -1,5 +1,6 @@
+from config import GALLERY_PATH, ACCEPTABLE_FILE_FORMATS
 from sftp_connection import SFTPNavigator
-from slack_api_requester import SlackApiRequester
+from slack_api import SlackApiRequester
 from utils.specified_exceptions import (
     ErrorMessages as Err,
     UnexpectedEventTypeError,
@@ -19,21 +20,6 @@ def return_status(status, message):
 
 class SlackEventApiHandler:
 
-    ACCEPTABLE_FILE_FORMATS = [
-        "avif",
-        "gif",
-        "heic",
-        "heif",
-        "jpeg",
-        "jpg",
-        "jpeg2000",
-        "png",
-        "raw",
-        "svg",
-        "tiff",
-    ]
-
-    SFTP_DEFAULT_GALLERY_PATH = "public_html/wp-content/gallery"
     SUCCESSFUL_CHALLENGE_MESSAGE = "A valid challenge received."
     FAILED_CHALLENGE_MESSAGE = "Did not receive a valid challenge."
 
@@ -129,7 +115,7 @@ class SlackEventApiHandler:
 
     def _is_valid_file_type(self, file_name: str) -> bool:
         file_type = self._get_file_format(file_name)
-        return file_type.lower() in self.ACCEPTABLE_FILE_FORMATS
+        return file_type.lower() in ACCEPTABLE_FILE_FORMATS
 
     @staticmethod
     def _get_file_format(file_name: str) -> str:
@@ -141,7 +127,7 @@ class SlackEventApiHandler:
 
     def _save_image_to_sftp_file(self, image_data, image_name, channel_name):
         try:
-            directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}"
+            directory_path = f"{GALLERY_PATH}/{channel_name}"
             if self.sftp.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 
