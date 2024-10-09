@@ -1,5 +1,5 @@
 from sftp_connection import SFTPNavigator
-from slack_api_requester import SlackApiRequester
+from slack_api import SlackApiRequester
 from utils.specified_exceptions import (
     ErrorMessages as Err,
     UnexpectedEventTypeError,

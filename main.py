@@ -1,9 +1,8 @@
 import datetime as dt
-import os.path
 
 import functions_framework
 
-from slack_event_api_handler import SlackEventApiHandler
+from slack_api import SlackEventApiHandler
 from utils.unpack_credentials import get_app_credentials
 
 

@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from slack_event_api_handler import SlackEventApiHandler
+from slack_api.slack_event_api_handler import SlackEventApiHandler
 from utils.specified_exceptions import UnexpectedEventTypeError, SlackApiError, FileFormatError, \
     WrongChannelProvidedError
 
