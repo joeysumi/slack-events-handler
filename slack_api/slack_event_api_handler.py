@@ -1,4 +1,4 @@
-from config import GALLERY_PATH
+from config import GALLERY_PATH, ACCEPTABLE_FILE_FORMATS
 from sftp_connection import SFTPNavigator
 from slack_api import SlackApiRequester
 from utils.specified_exceptions import (
@@ -19,20 +19,6 @@ def return_status(status, message):
 
 
 class SlackEventApiHandler:
-
-    ACCEPTABLE_FILE_FORMATS = [
-        "avif",
-        "gif",
-        "heic",
-        "heif",
-        "jpeg",
-        "jpg",
-        "jpeg2000",
-        "png",
-        "raw",
-        "svg",
-        "tiff",
-    ]
 
     SUCCESSFUL_CHALLENGE_MESSAGE = "A valid challenge received."
     FAILED_CHALLENGE_MESSAGE = "Did not receive a valid challenge."
@@ -129,7 +115,7 @@ class SlackEventApiHandler:
 
     def _is_valid_file_type(self, file_name: str) -> bool:
         file_type = self._get_file_format(file_name)
-        return file_type.lower() in self.ACCEPTABLE_FILE_FORMATS
+        return file_type.lower() in ACCEPTABLE_FILE_FORMATS
 
     @staticmethod
     def _get_file_format(file_name: str) -> str:
