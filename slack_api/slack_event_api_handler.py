@@ -1,3 +1,4 @@
+from config import GALLERY_PATH
 from sftp_connection import SFTPNavigator
 from slack_api import SlackApiRequester
 from utils.specified_exceptions import (
@@ -33,7 +34,6 @@ class SlackEventApiHandler:
         "tiff",
     ]
 
-    SFTP_DEFAULT_GALLERY_PATH = "public_html/wp-content/gallery"
     SUCCESSFUL_CHALLENGE_MESSAGE = "A valid challenge received."
     FAILED_CHALLENGE_MESSAGE = "Did not receive a valid challenge."
 
@@ -141,7 +141,7 @@ class SlackEventApiHandler:
 
     def _save_image_to_sftp_file(self, image_data, image_name, channel_name):
         try:
-            directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}"
+            directory_path = f"{GALLERY_PATH}/{channel_name}"
             if self.sftp.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 

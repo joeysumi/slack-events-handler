@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from config import GALLERY_PATH
 from slack_api.slack_event_api_handler import SlackEventApiHandler
 from utils.specified_exceptions import UnexpectedEventTypeError, SlackApiError, FileFormatError, \
     WrongChannelProvidedError
@@ -114,7 +115,7 @@ class TestSlackEventApiHandler(TestCase):
         self.fake_file_data = fake_file_data
         self.api_handler.handle_slack_event(fake_event_data)
 
-        expected_request = image_data, f"{self.api_handler.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}/{image_name}"
+        expected_request = image_data, f"{GALLERY_PATH}/{channel_name}/{image_name}"
 
         self.mock_navigator.return_value.save_file_to_directory.assert_called_once_with(*expected_request)
 
