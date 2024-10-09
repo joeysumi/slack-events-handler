@@ -20,9 +20,17 @@ def return_status(status, message):
 class SlackEventApiHandler:
 
     ACCEPTABLE_FILE_FORMATS = [
+        "avif",
+        "gif",
+        "heic",
+        "heif",
         "jpeg",
         "jpg",
+        "jpeg2000",
         "png",
+        "raw",
+        "svg",
+        "tiff",
     ]
 
     SFTP_DEFAULT_GALLERY_PATH = "public_html/wp-content/gallery"
@@ -31,6 +39,7 @@ class SlackEventApiHandler:
 
     def __init__(
             self,
+            slack_bot_token,
             sftp_host,
             sftp_username,
             sftp_password,
@@ -46,7 +55,7 @@ class SlackEventApiHandler:
         self._sftp_navigator = sftp_navigator  # lazy loads
         self._sftp = None
 
-        self.api_requester = api_requester()
+        self.api_requester = api_requester(bot_token=slack_bot_token)
 
     @property
     def sftp(self):
@@ -112,14 +121,19 @@ class SlackEventApiHandler:
 
         file_name = file_data["file"]["name"]
         if not self._is_valid_file_type(file_name):
-            raise FileFormatError(Err.FILE_FORMAT_ERROR)
+            file_format = self._get_file_format(file_name)
+            raise FileFormatError(f"{Err.FILE_FORMAT_ERROR}: Format is {file_format}")
 
         if not self._is_file_from_expected_channel(file_channel_id, file_data["file"]["channels"]):
             raise WrongChannelProvidedError(Err.WRONG_CHANNEL_ERROR)
 
     def _is_valid_file_type(self, file_name: str) -> bool:
-        file_type = file_name[file_name.rfind(".") + 1:]  # one removes the '.' from the file format
+        file_type = self._get_file_format(file_name)
         return file_type.lower() in self.ACCEPTABLE_FILE_FORMATS
+
+    @staticmethod
+    def _get_file_format(file_name: str) -> str:
+        return file_name[file_name.rfind(".") + 1:]  # one removes the '.' from the file format
 
     @staticmethod
     def _is_file_from_expected_channel(expected_channel: str, source_channels: list) -> bool:
@@ -127,8 +141,7 @@ class SlackEventApiHandler:
 
     def _save_image_to_sftp_file(self, image_data, image_name, channel_name):
         try:
-            # directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}"
-            directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/test_folder"
+            directory_path = f"{self.SFTP_DEFAULT_GALLERY_PATH}/{channel_name}"
             if self.sftp.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 

@@ -3,7 +3,7 @@ class ErrorMessages:
     EVENT_HANDLED_SUCCESSFULLY = "File event handled successfully."
     FILE_EXISTS = "File already exists at the specified directory."
     FILE_FORMAT_ERROR = "Cannot accept file format."
-    SLACK_RETRIEVAL_ERROR = "There was an error retrieving the file from Slack API."
+    SLACK_RETRIEVAL_ERROR = "There was an error retrieving the file data from Slack API."
     WRONG_CHANNEL_ERROR = "File was not found in expected channels."
 
 

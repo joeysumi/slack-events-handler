@@ -30,16 +30,17 @@ class TestSlackApiRequester(TestCase):
     IMAGE_DATA = b"image"
 
     def setUp(self) -> None:
+        self.bot_token = "some_token"
         self.request_service = Mock(**{
             "get.return_value.json.return_value": self.FILE_DATA,
             "get.return_value.content": self.IMAGE_DATA,
         })
-        self.api_requester = SlackApiRequester(self.request_service)
+        self.api_requester = SlackApiRequester(self.bot_token, self.request_service)
 
-    def test_get_api_token__return_expected_token(self):
-        expected_token = self.api_requester._bot_token
-        actual_token = self.api_requester.get_api_token()
-        self.assertEqual(expected_token, actual_token)
+    def test_get_file_data__request_header_authorization_initialized_as_expected(self):
+        actual_auth = self.api_requester.request_headers.get("Authorization")
+        expected_auth = f"Bearer {self.bot_token}"
+        self.assertEqual(expected_auth, actual_auth)
 
     def test_get_file_data__file_id_given__returns_expected_data(self):
         file_id = "some_id"
