@@ -1,5 +1,3 @@
-import os
-
 import requests
 
 
@@ -8,16 +6,13 @@ class SlackApiRequester:
     FILE_INFO_ENDPOINT = "files.info"
     CHAT_INFO_ENDPOINT = "conversations.info"
 
-    def __init__(self, requester=requests) -> None:
-        self._bot_token = os.environ.get("SLACK_BOT_TOKEN", "some_token")
+    def __init__(self, bot_token, requester=requests) -> None:
+        self._bot_token = bot_token
         self.request_headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self._bot_token}",
         }
         self.requester = requester
-
-    def get_api_token(self):
-        return self._bot_token
 
     def _make_request(self, method, url, jsonify, **kwargs):
         if method == "GET":
