@@ -90,7 +90,10 @@ class SlackEventApiHandler:
         file_name = file_data["file"]["name"]
         channel_name = file_data["file"]["shares"]["public"][file_channel_id][0]["channel_name"]
 
-        file_url = file_data["file"]["thumb_1024"]
+        file_url = file_data["file"].get("thumb_1024")
+        if file_url is None:  # The image's sides are less than 1024px
+            file_url = file_data["file"]["private_url"]
+
         image = self.api_requester.get_image_data(file_url)
 
         self._save_image_to_sftp_file(image, file_name, channel_name)
