@@ -4,7 +4,9 @@
 A serverless app that receives notifications from Slack's Events API. It figures out what image file was added on the
 Slack channel and imports it to an SFTP server gallery.
 
-Unfortunately at this time there is no universal Slack app to go with this code.
+### !! Note
+* I have been deploying this code on Google Cloud Function and therefore main.py is setup a particular way for GCF
+* Unfortunately at this time there is no universal Slack app to go with this code.
 You will have to create your own Slack app (instructions below)
 
 ## Setup 
