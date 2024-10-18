@@ -22,7 +22,7 @@ fake_file_data = {
                 }]
             }
         },
-        "url_private": image_url,
+        "thumb_1024": image_url,
     }
 }
 fake_file_data_no_event = {"color": "blue"}
@@ -105,7 +105,7 @@ class TestSlackEventApiHandler(TestCase):
 
         self.mock_requester.return_value.get_file_data.assert_called_once_with(file_id)
 
-    def test_handle_slack_event__file_shared_event__makes_expected_image_request_to_slack(self):
+    def test_handle_slack_event__file_shared_event__makes_image_request_to_smaller_slack_image(self):
         self.fake_file_data = fake_file_data
         self.api_handler.handle_slack_event(fake_event_data)
 
