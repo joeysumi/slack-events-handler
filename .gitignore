@@ -2,6 +2,7 @@ test.png
 testing_setup.py
 app-credentials.json
 venv/
+venv2/
 .idea/
 __pycache__/
 *.pyc
