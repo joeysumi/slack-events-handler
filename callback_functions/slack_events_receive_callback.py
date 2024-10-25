@@ -9,7 +9,7 @@ def slack_events_receive_callback(request) -> dict:
     headers = dict(request.headers)
     response = {}
 
-    if not is_request_timestamp_valid(headers["X-Slack-Request-Timestamp"]):
+    if not is_request_timestamp_valid(headers["x-slack-request-timestamp"]):
         response["status"] = "failed"
         response["message"] = "The request timestamp has expired."
 
