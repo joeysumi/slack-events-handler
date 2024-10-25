@@ -17,8 +17,6 @@ class AWSRequestFromEvents:
 
 
 def slack_events_url_endpoint_aws_lambda(event, context):
-    print(event)
-    print(context)
     headers = event.get("headers")
     params = event.get("queryStringParameters")
     body = event.get("body")
