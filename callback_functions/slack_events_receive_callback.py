@@ -16,7 +16,6 @@ def slack_events_receive_callback(request) -> dict:
     request_data = request.get_json(force=True)
 
     request_type = request_data.get("type")
-
     if request_type == "url_verification":
         response = SlackEventApiHandler.respond_to_url_verification(request_data)
 
@@ -27,7 +26,6 @@ def slack_events_receive_callback(request) -> dict:
         if app_credentials is None:  # no credentials match app_id
             response["status"] = "failed"
             response["message"] = "Slack app not registered in credentials."
-
         else:
             try:
                 event_handler = SlackEventApiHandler(**app_credentials)
@@ -37,8 +35,6 @@ def slack_events_receive_callback(request) -> dict:
 
     else:
         response = {"message": "Received no event type."}
-
-    print(response)
 
     return response
 
