@@ -2,7 +2,7 @@ from callback_functions import slack_events_url_endpoint_google_cloud_function, 
 
 
 def slack_events_callback(*args):
-    return slack_events_callback_factory(args)
+    return slack_events_callback_factory(*args)
 
 
 def slack_events_callback_factory(*args):

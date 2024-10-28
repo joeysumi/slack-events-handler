@@ -4,22 +4,24 @@
 A serverless app that receives notifications from Slack's Events API. It figures out what image file was added on the
 Slack channel and imports it to an SFTP server gallery.
 
-### !! Note
-* I have been deploying this code on Google Cloud Function and therefore main.py is setup a particular way for GCF
+## !! Important !!
+* This code should work for both Google Cloud Functions (GCF) and Amazon Web Services (AWS) Lambda.
+* The GCF implementation requires the dependency `functions-framework` but it isn't necessary with AWS Lambda.
 * Unfortunately at this time there is no universal Slack app to go with this code.
 You will have to create your own Slack app (instructions below)
+* The activating module with the `callback` function is `main.py`. GCF requires this.
 
 ## Setup 
-* Create a new file called `app-credentials.json` based off of `app-credentials-layout.json`, changing `null` to the
+* Create a new JSON file called `app-credentials.json` based off of `app-credentials-layout.json`, changing `null` to the
 actual values.
     * `slack_app_id` - The APP ID of the Slack app (required to confirm that the event notification is from an expected app)
     * `slack_bot_token` - The bot token of the app (required to make requests back to Slack)
     * `sftp_host` - Host of the SFTP server
-    * `sftp_username`
-    * `sftp_password`
-    * `sftp_port`
+    * `sftp_username` - SFTP Username
+    * `sftp_password` - SFTP Password
+    * `sftp_port` - SFTP Port (defaults to 22)
 
-(last modified 2024.9.9)
+(last modified 2024.10.25)
 
 ### Slack App setup
 1. Create a New Slack App

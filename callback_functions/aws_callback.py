@@ -1,3 +1,5 @@
+import json
+
 from callback_functions import slack_events_receive_callback
 
 
@@ -8,9 +10,9 @@ class AWSRequestFromEvents:
     def __init__(self, *, headers=None, params=None, body=None):
         self.headers = headers
         self.params = params
-        self.body = body
+        self.body = body if isinstance(body, dict) else json.loads(body)
 
-    def get_json(self, *args):
+    def get_json(self, *args, **kwargs):
         return self.body
 
 
