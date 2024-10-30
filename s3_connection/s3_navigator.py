@@ -3,11 +3,10 @@ import boto3
 
 class S3Navigator:
 
-    BUCKET_NAME = ""
-
-    def __init__(self):
+    def __init__(self, bucket_name):
         self._s3_resource = None
         self._s3_bucket = None
+        self.bucket_name = bucket_name
 
     @property
     def s3_resource(self):
@@ -18,7 +17,7 @@ class S3Navigator:
     @property
     def s3_bucket(self):
         if self._s3_bucket is None:
-            self._s3_bucket = self.s3_resource.Bucket(self.BUCKET_NAME)
+            self._s3_bucket = self.s3_resource.Bucket(self.bucket_name)
         return self._s3_bucket
 
     def is_file_in_directory(self, directory_path: str, file_name: str) -> bool:
@@ -39,5 +38,5 @@ class S3Navigator:
         """ Saves the file to the S3 Bucket, if the path doesn't exist, it will create one
             Thus it is important to have the correct path or there will be variations and different "folders"
         """
-        img_obj = self.s3_resource.Object(self.BUCKET_NAME, file_path)
+        img_obj = self.s3_resource.Object(self.bucket_name, file_path)
         img_obj.put(Body=file_data)
