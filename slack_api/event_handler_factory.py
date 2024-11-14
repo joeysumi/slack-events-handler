@@ -18,7 +18,7 @@ class EventHandlerFactory:
         """
         storage_navigator_class = self.CONNECTION_MAP[SOURCE_CONNECTION]
         storage_navigator = storage_navigator_class(**credentials)
-        slack_api_requester = SlackApiRequester(bot_token=credentials["bot_token"])
+        slack_api_requester = SlackApiRequester(bot_token=credentials["slack_bot_token"])
 
         handler = SlackEventApiHandler(
             file_storage_navigator=storage_navigator,

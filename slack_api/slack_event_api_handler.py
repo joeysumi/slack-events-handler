@@ -113,4 +113,4 @@ class SlackEventApiHandler:
             self.storage_navigator.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
 
         except Exception as err:
-            print(f"An SFTP Error occurred: {err}")
+            print(f"An error occurred when saving the file: {err}")

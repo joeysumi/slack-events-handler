@@ -5,7 +5,7 @@ from file_navigator import FileNavigatorBase
 
 class S3Navigator(FileNavigatorBase):
 
-    def __init__(self, bucket_name):
+    def __init__(self, bucket_name, **kwargs):
         self._s3_resource = None
         self._s3_bucket = None
         self.bucket_name = bucket_name
