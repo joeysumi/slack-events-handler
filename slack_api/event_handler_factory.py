@@ -1,6 +1,6 @@
 from config import SOURCE_CONNECTION
-from s3_file_navigator import S3Navigator
-from sftp_file_navigator import SFTPNavigator
+from file_navigator.s3_file_navigator import S3Navigator
+from file_navigator.sftp_file_navigator import SFTPNavigator
 from slack_api import SlackEventApiHandler, SlackApiRequester
 
 

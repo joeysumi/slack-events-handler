@@ -1,7 +1,9 @@
 import boto3
 
+from file_navigator import FileNavigatorBase
 
-class S3Navigator:
+
+class S3Navigator(FileNavigatorBase):
 
     def __init__(self, bucket_name):
         self._s3_resource = None
