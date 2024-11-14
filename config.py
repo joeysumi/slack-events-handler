@@ -5,7 +5,7 @@ SOURCE_CONNECTION = "s3"
 CREDENTIALS_PATH = "./app-credentials.json"
 
 # Path to WordPress files gallery
-GALLERY_PATH = "public_html/wp-content/gallery"
+GALLERY_PATH = None  # an example would be "public_html/wp-content/gallery" - to keep it in the base bucket put `None`
 
 # Acceptable image file formats to look for in Slack Event
 ACCEPTABLE_FILE_FORMATS = [
