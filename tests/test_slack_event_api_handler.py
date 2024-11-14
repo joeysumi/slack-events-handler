@@ -48,25 +48,16 @@ def create_fake_challenge_response(token=None, challenge=None) -> dict:
 class TestSlackEventApiHandler(TestCase):
 
     def setUp(self) -> None:
-        self.fake_credentials = {
-            "slack_app_id": "some_app_id",
-            "slack_bot_token": "secret_token",
-            "sftp_host": "host",
-            "sftp_username": "username",
-            "sftp_password": "password",
-            "sftp_port": 1,
-        }
         self._fake_file_data = None  # will be lazy loaded for exception tests
         self.mock_requester = Mock(**{
-            "return_value.get_image_data.return_value": image_data
+            "get_image_data.return_value": image_data,
         })
         self.mock_navigator = Mock(**{
-            "return_value.is_file_in_directory.return_value": False
+            "is_file_in_directory.return_value": False
         })
         self.api_handler = SlackEventApiHandler(
-            **self.fake_credentials,
+            navigator=self.mock_navigator,
             api_requester=self.mock_requester,
-            sftp_navigator=self.mock_navigator,
         )
         self.token = "some_token"
         self.challenge = "some_challenge"
@@ -78,7 +69,7 @@ class TestSlackEventApiHandler(TestCase):
     @fake_file_data.setter
     def fake_file_data(self, value):
         self._fake_file_data = value
-        self.mock_requester.return_value.get_file_data.return_value = self._fake_file_data
+        self.mock_requester.get_file_data.return_value = self._fake_file_data
 
     def test_respond_to_url_verification__token_and_challenge_given__returns_success_message(self):
         actual = self.api_handler.respond_to_url_verification(
@@ -103,21 +94,21 @@ class TestSlackEventApiHandler(TestCase):
         self.fake_file_data = fake_file_data
         self.api_handler.handle_slack_event(fake_event_data)
 
-        self.mock_requester.return_value.get_file_data.assert_called_once_with(file_id)
+        self.mock_requester.get_file_data.assert_called_once_with(file_id)
 
     def test_handle_slack_event__file_shared_event__makes_image_request_to_smaller_slack_image(self):
         self.fake_file_data = fake_file_data
         self.api_handler.handle_slack_event(fake_event_data)
 
-        self.mock_requester.return_value.get_image_data.assert_called_once_with(image_url)
+        self.mock_requester.get_image_data.assert_called_once_with(image_url)
 
-    def test_handle_slack_event__file_shared_event__makes_expected_request_to_sftp(self):
+    def test_handle_slack_event__file_shared_event__makes_expected_request_to_save_image_to_file(self):
         self.fake_file_data = fake_file_data
         self.api_handler.handle_slack_event(fake_event_data)
 
         expected_request = image_data, f"{GALLERY_PATH}/{channel_name}/{image_name}"
 
-        self.mock_navigator.return_value.save_file_to_directory.assert_called_once_with(*expected_request)
+        self.mock_navigator.save_file_to_directory.assert_called_once_with(*expected_request)
 
     # Test Exceptions ----------------------------------------
 

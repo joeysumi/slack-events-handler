@@ -1,3 +1,6 @@
+# Set where you would like the photo files to be stored - "s3" or "sftp"
+SOURCE_CONNECTION = "s3"
+
 # Path to credential JSON file within application
 CREDENTIALS_PATH = "./app-credentials.json"
 
