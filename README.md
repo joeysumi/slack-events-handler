@@ -26,7 +26,7 @@ changing `null` to the actual values, where necessary[^1].
 are online).
 4. Create the source directory where you want to download the image files (`S3` or `SFTP`).
 
-[^1] Right now the S3 Bucket works in AWS Lambda through being in the same VPC
+[^1]: Right now the S3 Bucket works in AWS Lambda through being in the same VPC
 
 (last modified 2024.11.13)
 
