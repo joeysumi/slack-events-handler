@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 from paramiko.ssh_exception import SSHException, AuthenticationException
 
-from sftp_connection import SFTPConnector
+from sftp_file_navigator import SFTPConnector
 from utils.specified_exceptions import FailedSFTPSessionConnectionError, SFTPAuthenticationError
 
 host = "some_host"

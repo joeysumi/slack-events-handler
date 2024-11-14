@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch, Mock
 
-from s3_connection import S3Navigator
+from s3_file_navigator import S3Navigator
 
 fake_image_name = "some_image.jpg"
 mocked_response = {
@@ -15,7 +15,7 @@ mocked_response = {
 class TestS3Navigator(TestCase):
 
     def setUp(self) -> None:
-        self.patched_boto = patch("s3_connection.s3_navigator.boto3", **mocked_response)
+        self.patched_boto = patch("s3_file_navigator.s3_navigator.boto3", **mocked_response)
         self.fake_boto3 = self.patched_boto.start()
         self.navigator = S3Navigator(bucket_name="my_bucket")
 

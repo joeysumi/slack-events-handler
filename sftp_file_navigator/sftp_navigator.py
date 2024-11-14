@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 
-from sftp_connection import SFTPConnector
+from sftp_file_navigator import SFTPConnector
 
 
 def log(text):
