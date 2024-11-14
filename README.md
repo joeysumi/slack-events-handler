@@ -2,26 +2,33 @@
 
 ## What is it?
 A serverless app that receives notifications from Slack's Events API. It figures out what image file was added on the
-Slack channel and imports it to an SFTP server gallery.
+Slack channel and imports it to an SFTP server or S3 Bucket.
 
-## !! Important !!
+[!IMPORTANT]
 * This code should work for both Google Cloud Functions (GCF) and Amazon Web Services (AWS) Lambda.
 * The GCF implementation requires the dependency `functions-framework` but it isn't necessary with AWS Lambda.
 * Unfortunately at this time there is no universal Slack app to go with this code.
-You will have to create your own Slack app (instructions below)
+You will have to create your own Slack app ([instructions below](#slack-app-setup)).
 * The activating module with the `callback` function is `main.py`. GCF requires this.
 
 ## Setup 
-* Create a new JSON file called `app-credentials.json` based off of `app-credentials-layout.json`, changing `null` to the
-actual values.
+1. Create a new JSON file called `app-credentials.json` based off of `app-credentials-layout.json`, 
+changing `null` to the actual values, where necessary[^1].
     * `slack_app_id` - The APP ID of the Slack app (required to confirm that the event notification is from an expected app)
     * `slack_bot_token` - The bot token of the app (required to make requests back to Slack)
     * `sftp_host` - Host of the SFTP server
     * `sftp_username` - SFTP Username
     * `sftp_password` - SFTP Password
     * `sftp_port` - SFTP Port (defaults to 22)
+2. Specify where you want to save the image files by modifying the `SOURCE_CONNECTION` in the 
+`config.py` file. Use `s3` or `sftp`. (Currently there are only two options available.)
+3. Zip the `slack-events-plugin` directory and upload it to Google Cloud Functions or AWS Lambda (directions
+are online).
+4. Create the source directory where you want to download the image files (`S3` or `SFTP`).
 
-(last modified 2024.10.25)
+[^1]: Right now the S3 Bucket works in AWS Lambda through being in the same VPC
+
+(last modified 2024.11.13)
 
 ### Slack App setup
 1. Create a New Slack App
