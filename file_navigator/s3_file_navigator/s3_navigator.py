@@ -5,7 +5,7 @@ from file_navigator import FileNavigatorBase
 
 class S3Navigator(FileNavigatorBase):
 
-    def __init__(self, bucket_name):
+    def __init__(self, bucket_name, **kwargs):
         self._s3_resource = None
         self._s3_bucket = None
         self.bucket_name = bucket_name
@@ -14,6 +14,7 @@ class S3Navigator(FileNavigatorBase):
     def s3_resource(self):
         if self._s3_resource is None:
             self._s3_resource = boto3.resource("s3")
+            print("Connected to S3 resource.")
         return self._s3_resource
 
     @property

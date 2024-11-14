@@ -13,7 +13,7 @@ class SFTPNavigator(FileNavigatorBase):
 
     DEFAULT_CUTOFF_TIME_IN_SECONDS = 60 * 60 * 24 * 365  # about a year
 
-    def __init__(self, host=None, username=None, password=None, port=None, sftp_connector=SFTPConnector()):
+    def __init__(self, host=None, username=None, password=None, port=None, sftp_connector=SFTPConnector(), **kwargs):
         self._host = host
         self._username = username
         self._password = password

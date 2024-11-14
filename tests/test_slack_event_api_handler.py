@@ -38,6 +38,8 @@ fake_event_data = {
 }
 image_data = b"this_is_the_image_data"
 
+FAKE_GALLERY_PATH = "wp-content/gallery"
+
 
 def create_fake_challenge_response(token=None, challenge=None) -> dict:
     if not token and not challenge:
@@ -102,11 +104,21 @@ class TestSlackEventApiHandler(TestCase):
 
         self.mock_requester.get_image_data.assert_called_once_with(image_url)
 
-    def test_handle_slack_event__file_shared_event__makes_expected_request_to_save_image_to_file(self):
+    def test_handle_slack_event__file_shared_event__gallery_path_present__makes_expected_request_to_save_image_to_file(self):
         self.fake_file_data = fake_file_data
+        self.api_handler.GALLERY_PATH = FAKE_GALLERY_PATH  # I know this is monkey patching of the config setting
         self.api_handler.handle_slack_event(fake_event_data)
 
-        expected_request = image_data, f"{GALLERY_PATH}/{channel_name}/{image_name}"
+        expected_request = image_data, f"{FAKE_GALLERY_PATH}/{channel_name}/{image_name}"
+
+        self.mock_navigator.save_file_to_directory.assert_called_once_with(*expected_request)
+
+    def test_handle_slack_event__file_shared_event__no_gallery_path__makes_expected_request_to_save_image_to_file(self):
+        self.fake_file_data = fake_file_data
+        self.api_handler.GALLERY_PATH = None  # I know this is monkey patching of the config setting
+        self.api_handler.handle_slack_event(fake_event_data)
+
+        expected_request = image_data, f"{channel_name}/{image_name}"
 
         self.mock_navigator.save_file_to_directory.assert_called_once_with(*expected_request)
 

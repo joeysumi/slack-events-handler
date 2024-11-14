@@ -20,6 +20,7 @@ class SlackEventApiHandler:
 
     SUCCESSFUL_CHALLENGE_MESSAGE = "A valid challenge received."
     FAILED_CHALLENGE_MESSAGE = "Did not receive a valid challenge."
+    GALLERY_PATH = GALLERY_PATH
 
     def __init__(
             self,
@@ -106,11 +107,11 @@ class SlackEventApiHandler:
 
     def _save_image_to_file(self, image_data, image_name, channel_name):
         try:
-            directory_path = f"{GALLERY_PATH}/{channel_name}"
+            directory_path = f"{self.GALLERY_PATH}/{channel_name}" if self.GALLERY_PATH else channel_name
             if self.storage_navigator.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 
             self.storage_navigator.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
 
         except Exception as err:
-            print(f"An SFTP Error occurred: {err}")
+            print(f"An error occurred when saving the file: {err}")
