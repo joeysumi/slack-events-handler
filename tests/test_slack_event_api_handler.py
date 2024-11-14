@@ -56,8 +56,8 @@ class TestSlackEventApiHandler(TestCase):
             "is_file_in_directory.return_value": False
         })
         self.api_handler = SlackEventApiHandler(
-            navigator=self.mock_navigator,
-            api_requester=self.mock_requester,
+            file_storage_navigator=self.mock_navigator,
+            slack_api_requester=self.mock_requester,
         )
         self.token = "some_token"
         self.challenge = "some_challenge"

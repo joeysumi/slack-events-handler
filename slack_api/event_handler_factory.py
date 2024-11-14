@@ -16,9 +16,12 @@ class EventHandlerFactory:
         """ Creates and instantiates the handler
             Determines which type of connection as stated in the Config module
         """
-        navigator_class = self.CONNECTION_MAP[SOURCE_CONNECTION]
-        navigator = navigator_class(**credentials)
+        storage_navigator_class = self.CONNECTION_MAP[SOURCE_CONNECTION]
+        storage_navigator = storage_navigator_class(**credentials)
         slack_api_requester = SlackApiRequester(bot_token=credentials["bot_token"])
 
-        handler = SlackEventApiHandler(navigator=navigator, api_requester=slack_api_requester)
+        handler = SlackEventApiHandler(
+            file_storage_navigator=storage_navigator,
+            slack_api_requester=slack_api_requester,
+        )
         return handler

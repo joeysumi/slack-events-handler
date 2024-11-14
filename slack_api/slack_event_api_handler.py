@@ -23,12 +23,12 @@ class SlackEventApiHandler:
 
     def __init__(
             self,
-            navigator=None,
-            api_requester=None,
+            file_storage_navigator=None,
+            slack_api_requester=None,
             **kwargs
     ) -> None:
-        self.navigator = navigator
-        self.api_requester = api_requester
+        self.storage_navigator = file_storage_navigator
+        self.slack_api_requester = slack_api_requester
 
     @classmethod
     def respond_to_url_verification(cls, response: dict) -> dict:
@@ -70,12 +70,12 @@ class SlackEventApiHandler:
         if file_url is None:  # The image's sides are less than 1024px
             file_url = file_data["file"]["url_private"]
 
-        image = self.api_requester.get_image_data(file_url)
+        image = self.slack_api_requester.get_image_data(file_url)
 
         self._save_image_to_file(image, file_name, channel_name)
 
     def _get_file_data_from_slack(self, file_id: str, file_channel_id: str) -> dict:
-        file_data = self.api_requester.get_file_data(file_id)
+        file_data = self.slack_api_requester.get_file_data(file_id)
         self._verify_file_data(file_data, file_channel_id)
 
         return file_data
@@ -107,10 +107,10 @@ class SlackEventApiHandler:
     def _save_image_to_file(self, image_data, image_name, channel_name):
         try:
             directory_path = f"{GALLERY_PATH}/{channel_name}"
-            if self.navigator.is_file_in_directory(directory_path, image_name):
+            if self.storage_navigator.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 
-            self.navigator.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
+            self.storage_navigator.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
 
         except Exception as err:
             print(f"An SFTP Error occurred: {err}")
