@@ -4,7 +4,7 @@
 A serverless app that receives notifications from Slack's Events API. It figures out what image file was added on the
 Slack channel and imports it to an SFTP server or S3 Bucket.
 
-[!IMPORTANT]
+## !! Important !!
 * This code should work for both Google Cloud Functions (GCF) and Amazon Web Services (AWS) Lambda.
 * The GCF implementation requires the dependency `functions-framework` but it isn't necessary with AWS Lambda.
 * Unfortunately at this time there is no universal Slack app to go with this code.
@@ -26,7 +26,7 @@ changing `null` to the actual values, where necessary[^1].
 are online).
 4. Create the source directory where you want to download the image files (`S3` or `SFTP`).
 
-[^1]: Right now the S3 Bucket works in AWS Lambda through being in the same VPC
+[^1] Right now the S3 Bucket works in AWS Lambda through being in the same VPC
 
 (last modified 2024.11.13)
 
