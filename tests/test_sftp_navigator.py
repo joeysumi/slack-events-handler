@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from sftp_connection import SFTPNavigator
+from file_navigator.sftp_file_navigator import SFTPNavigator
 
 fake_file = "Fake File"
 correct_directory = "directory/to/file"

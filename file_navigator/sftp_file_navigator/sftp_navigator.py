@@ -1,6 +1,7 @@
 from datetime import datetime as dt
 
-from sftp_connection import SFTPConnector
+from file_navigator import FileNavigatorBase
+from file_navigator.sftp_file_navigator import SFTPConnector
 
 
 def log(text):
@@ -8,7 +9,7 @@ def log(text):
     print(text)
 
 
-class SFTPNavigator:
+class SFTPNavigator(FileNavigatorBase):
 
     DEFAULT_CUTOFF_TIME_IN_SECONDS = 60 * 60 * 24 * 365  # about a year
 

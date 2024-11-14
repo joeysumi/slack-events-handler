@@ -1,6 +1,4 @@
 from config import GALLERY_PATH, ACCEPTABLE_FILE_FORMATS
-from sftp_connection import SFTPNavigator
-from slack_api import SlackApiRequester
 from utils.specified_exceptions import (
     ErrorMessages as Err,
     UnexpectedEventTypeError,
@@ -25,34 +23,12 @@ class SlackEventApiHandler:
 
     def __init__(
             self,
-            slack_bot_token,
-            sftp_host,
-            sftp_username,
-            sftp_password,
-            sftp_port,
-            api_requester=SlackApiRequester,
-            sftp_navigator=SFTPNavigator,
+            file_storage_navigator=None,
+            slack_api_requester=None,
             **kwargs
     ) -> None:
-        self._sftp_host = sftp_host
-        self._sftp_username = sftp_username
-        self._sftp_password = sftp_password
-        self._sftp_port = sftp_port
-        self._sftp_navigator = sftp_navigator  # lazy loads
-        self._sftp = None
-
-        self.api_requester = api_requester(bot_token=slack_bot_token)
-
-    @property
-    def sftp(self):
-        if self._sftp is None:
-            self._sftp = self._sftp_navigator(
-                self._sftp_host,
-                self._sftp_username,
-                self._sftp_password,
-                self._sftp_port
-            )
-        return self._sftp
+        self.storage_navigator = file_storage_navigator
+        self.slack_api_requester = slack_api_requester
 
     @classmethod
     def respond_to_url_verification(cls, response: dict) -> dict:
@@ -94,12 +70,12 @@ class SlackEventApiHandler:
         if file_url is None:  # The image's sides are less than 1024px
             file_url = file_data["file"]["url_private"]
 
-        image = self.api_requester.get_image_data(file_url)
+        image = self.slack_api_requester.get_image_data(file_url)
 
-        self._save_image_to_sftp_file(image, file_name, channel_name)
+        self._save_image_to_file(image, file_name, channel_name)
 
     def _get_file_data_from_slack(self, file_id: str, file_channel_id: str) -> dict:
-        file_data = self.api_requester.get_file_data(file_id)
+        file_data = self.slack_api_requester.get_file_data(file_id)
         self._verify_file_data(file_data, file_channel_id)
 
         return file_data
@@ -128,13 +104,13 @@ class SlackEventApiHandler:
     def _is_file_from_expected_channel(expected_channel: str, source_channels: list) -> bool:
         return expected_channel in source_channels
 
-    def _save_image_to_sftp_file(self, image_data, image_name, channel_name):
+    def _save_image_to_file(self, image_data, image_name, channel_name):
         try:
             directory_path = f"{GALLERY_PATH}/{channel_name}"
-            if self.sftp.is_file_in_directory(directory_path, image_name):
+            if self.storage_navigator.is_file_in_directory(directory_path, image_name):
                 raise FileAlreadyExistsError(Err.FILE_EXISTS)
 
-            self.sftp.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
+            self.storage_navigator.save_file_to_directory(image_data, f"{directory_path}/{image_name}")
 
         except Exception as err:
             print(f"An SFTP Error occurred: {err}")
