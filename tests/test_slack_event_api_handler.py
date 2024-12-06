@@ -1,10 +1,13 @@
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from config import GALLERY_PATH
 from slack_api.slack_event_api_handler import SlackEventApiHandler
-from utils.specified_exceptions import UnexpectedEventTypeError, SlackApiError, FileFormatError, \
+from utils.specified_exceptions import (
+    UnexpectedEventTypeError,
+    SlackApiError,
+    FileFormatError,
     WrongChannelProvidedError
+)
 
 file_id = "12345"
 channel_id = "6789"
@@ -120,18 +123,18 @@ class TestSlackEventApiHandler(TestCase):
 
         self.mock_requester.get_image_data.assert_called_once_with(image_url)
 
+    @patch("slack_api.slack_event_api_handler.GALLERY_PATH", new=FAKE_GALLERY_PATH)
     def test_handle_slack_event__file_shared_event__gallery_path_present__makes_expected_request_to_save_image_to_file(self):
         self.fake_file_data = fake_file_data
-        self.api_handler.GALLERY_PATH = FAKE_GALLERY_PATH  # I know this is monkey patching of the config setting
         self.api_handler.handle_slack_event(fake_event_data)
 
         expected_request = image_data, f"{FAKE_GALLERY_PATH}/{channel_name}/{image_name}"
 
         self.mock_navigator.save_file_to_directory.assert_called_once_with(*expected_request)
 
+    @patch("slack_api.slack_event_api_handler.GALLERY_PATH", new=None)
     def test_handle_slack_event__file_shared_event__no_gallery_path__makes_expected_request_to_save_image_to_file(self):
         self.fake_file_data = fake_file_data
-        self.api_handler.GALLERY_PATH = None  # I know this is monkey patching of the config setting
         self.api_handler.handle_slack_event(fake_event_data)
 
         expected_request = image_data, f"{channel_name}/{image_name}"
