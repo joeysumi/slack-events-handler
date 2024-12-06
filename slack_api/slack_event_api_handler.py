@@ -1,4 +1,4 @@
-from config import GALLERY_PATH, ACCEPTABLE_FILE_FORMATS
+from config import GALLERY_PATH, ACCEPTABLE_FILE_FORMATS, EXCLUDE_THREADED_IMAGES
 from utils.specified_exceptions import (
     ErrorMessages as Err,
     UnexpectedEventTypeError,
@@ -63,6 +63,11 @@ class SlackEventApiHandler:
         file_channel_id = file_event_data["event"]["channel_id"]
 
         file_data = self._get_file_data_from_slack(file_id, file_channel_id)
+
+        if EXCLUDE_THREADED_IMAGES:
+            is_thread = file_data["file"]["shares"]["public"][file_channel_id][0].get("thread_ts", False)
+            if is_thread:
+                return None
 
         file_name = file_data["file"]["name"]
         channel_name = file_data["file"]["shares"]["public"][file_channel_id][0]["channel_name"]

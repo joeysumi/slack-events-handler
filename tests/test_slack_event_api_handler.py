@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from config import GALLERY_PATH
 from slack_api.slack_event_api_handler import SlackEventApiHandler
@@ -19,6 +19,22 @@ fake_file_data = {
             "public": {
                 channel_id: [{
                     "channel_name": channel_name,
+                    "ts": "1733519316",
+                }]
+            }
+        },
+        "thumb_1024": image_url,
+    }
+}
+fake_threaded_file_data = {
+    "file": {
+        "name": image_name,
+        "channels": [channel_id],
+        "shares": {
+            "public": {
+                channel_id: [{
+                    "channel_name": channel_name,
+                    "thread_ts": "1733519316",
                 }]
             }
         },
@@ -121,6 +137,20 @@ class TestSlackEventApiHandler(TestCase):
         expected_request = image_data, f"{channel_name}/{image_name}"
 
         self.mock_navigator.save_file_to_directory.assert_called_once_with(*expected_request)
+
+    @patch("slack_api.slack_event_api_handler.EXCLUDE_THREADED_IMAGES", new=False)
+    def test_handle_slack_event__exclude_threaded_images_false__file_is_thread__saves_image(self):
+        self.fake_file_data = fake_threaded_file_data
+        self.api_handler.handle_slack_event(fake_event_data)
+
+        self.mock_navigator.save_file_to_directory.assert_called_once()
+
+    @patch("slack_api.slack_event_api_handler.EXCLUDE_THREADED_IMAGES", new=True)
+    def test_handle_slack_event__exclude_threaded_images_true__file_is_thread__saves_image(self):
+        self.fake_file_data = fake_threaded_file_data
+        self.api_handler.handle_slack_event(fake_event_data)
+
+        self.mock_navigator.save_file_to_directory.assert_not_called()
 
     # Test Exceptions ----------------------------------------
 

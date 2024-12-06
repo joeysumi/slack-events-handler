@@ -39,7 +39,7 @@ def slack_events_receive_callback(request) -> dict:
     else:
         response = {"message": "Received no event type."}
 
-    return response
+    return {"statusCode": 200, "body": response}
 
 
 def is_request_timestamp_valid(timestamp):
