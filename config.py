@@ -4,6 +4,9 @@ SOURCE_CONNECTION = "s3"
 # Path to credential JSON file within application
 CREDENTIALS_PATH = "./app-credentials.json"
 
+# Set to False if you want to include images sent in Slack message threads (replies)
+EXCLUDE_THREADED_IMAGES = True
+
 # Path to WordPress files gallery
 GALLERY_PATH = None  # an example would be "public_html/wp-content/gallery" - to keep it in the base bucket put `None`
 
